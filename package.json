@@ -2,6 +2,7 @@
   "name": "alter-buddy",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "findUnusedExports": {
     "include": [
       "./src/**/*.d.ts",

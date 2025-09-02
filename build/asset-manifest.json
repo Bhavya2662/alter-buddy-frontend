@@ -1,10 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.2431ca08.css",
-    "main.js": "/static/js/main.b983ff6c.js",
-    "static/js/805.aaa3229b.chunk.js": "/static/js/805.aaa3229b.chunk.js",
-    "static/js/179.8acd09a9.chunk.js": "/static/js/179.8acd09a9.chunk.js",
-    "static/js/767.1251ba93.chunk.js": "/static/js/767.1251ba93.chunk.js",
+    "main.css": "/static/css/main.fb21d0a0.css",
+    "main.js": "/static/js/main.64e79018.js",
+    "static/js/767.bcab5aa6.chunk.js": "/static/js/767.bcab5aa6.chunk.js",
     "static/media/pet1.png": "/static/media/pet1.510fc5a24d16e4c7ddd5.png",
     "static/media/dr-4.png": "/static/media/dr-4.43f99b023dc028fc540f.png",
     "static/media/pet5.png": "/static/media/pet5.be8dab309e369bc0ca37.png",
@@ -105,13 +103,17 @@
     "static/media/alter-logo.svg": "/static/media/alter-logo.763552223351175cb544149277ea3002.svg",
     "static/media/AvenirLTStd-Black.otf": "/static/media/AvenirLTStd-Black.7ce894e12078ca8c5134.otf",
     "static/media/AvenirLTStd-Book.otf": "/static/media/AvenirLTStd-Book.813557df4c7a90b1a474.otf",
+    "static/media/screen-share.png": "/static/media/screen-share.c644b6bd9da883886f57.png",
     "static/media/our-story-1.jpg": "/static/media/our-story-1.70bd83c81899f3a57b46.jpg",
+    "static/media/pdf-share.png": "/static/media/pdf-share.cc2313dc571cd32ce346.png",
     "static/media/testimonial-img4.png": "/static/media/testimonial-img4.7f3d12d6c4961c557d26.png",
     "static/media/testimonial-img5.png": "/static/media/testimonial-img5.dfb087789a911186f8bf.png",
     "static/media/stream-chat-icons.eot": "/static/media/stream-chat-icons.7e19c1bc7a43db5b6646.eot",
     "static/media/stream-chat-icons.ttf": "/static/media/stream-chat-icons.fa2206c55b918be1bf69.ttf",
     "static/media/stream-chat-icons.woff": "/static/media/stream-chat-icons.723e063ab0ada214f6a1.woff",
+    "static/media/transaction_error.svg": "/static/media/transaction_error.9f2b61815a4979b01bd0583b6b7c6956.svg",
     "static/media/stream-chat-icons.svg": "/static/media/stream-chat-icons.15f663c1399e3d7562a9.svg",
+    "static/media/empty-chat.svg": "/static/media/empty-chat.522ea05d0d82d5de6e44625483b5548d.svg",
     "static/media/slick.svg": "/static/media/slick.2630a3e3eab21c607e21.svg",
     "static/media/facebook-logo.svg": "/static/media/facebook-logo.6efed648537bea26ddfa1308f6885be6.svg",
     "static/media/slick.eot": "/static/media/slick.a4e97f5a2a64f0ab1323.eot",
@@ -121,14 +123,12 @@
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "static/media/linkedin-logo.svg": "/static/media/linkedin-logo.60ddbb5ad7ddf30516ba66a29373e861.svg",
     "index.html": "/index.html",
-    "main.2431ca08.css.map": "/static/css/main.2431ca08.css.map",
-    "main.b983ff6c.js.map": "/static/js/main.b983ff6c.js.map",
-    "805.aaa3229b.chunk.js.map": "/static/js/805.aaa3229b.chunk.js.map",
-    "179.8acd09a9.chunk.js.map": "/static/js/179.8acd09a9.chunk.js.map",
-    "767.1251ba93.chunk.js.map": "/static/js/767.1251ba93.chunk.js.map"
+    "main.fb21d0a0.css.map": "/static/css/main.fb21d0a0.css.map",
+    "main.64e79018.js.map": "/static/js/main.64e79018.js.map",
+    "767.bcab5aa6.chunk.js.map": "/static/js/767.bcab5aa6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2431ca08.css",
-    "static/js/main.b983ff6c.js"
+    "static/css/main.fb21d0a0.css",
+    "static/js/main.64e79018.js"
   ]
 }
