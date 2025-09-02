@@ -1,0 +1,7 @@
+{
+  "extensions.experimental.useUtilityProcess": false,
+  "git.ignoreLimitWarning": true,
+  "typescript.suggest.paths": true,
+  "javascript.suggest.paths": true,
+  "findUnusedExports.detectCircularImports": true
+}

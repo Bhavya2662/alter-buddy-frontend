@@ -1,0 +1,2 @@
+(self.webpackChunkalter_buddy=self.webpackChunkalter_buddy||[]).push([[805],{2805:e=>{function r(e){var r=new Error("Cannot find module '"+e+"'");throw r.code="MODULE_NOT_FOUND",r}r.keys=()=>[],r.resolve=r,r.id=2805,e.exports=r}}]);
+//# sourceMappingURL=805.aaa3229b.chunk.js.map
