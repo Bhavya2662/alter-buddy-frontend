@@ -3,7 +3,7 @@ import { ApiBaseQuery, baseQueryMentor, baseQueryUser } from "../../utils";
 import { ISessionPackage } from "../../interface";
 
 const SessionPackageApi = createApi({
-  baseQuery: ApiBaseQuery(baseQueryUser),
+  baseQuery: ApiBaseQuery(baseQueryMentor),
   reducerPath: "sessionPackageApi",
   tagTypes: ["sessionPackagesApi"],
   endpoints: ({ query, mutation }) => ({

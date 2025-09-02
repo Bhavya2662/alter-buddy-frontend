@@ -58,12 +58,6 @@ const data = {
 
 const sessionTypes = [
   {
-    type: 'video',
-    icon: FaVideo,
-    title: 'Video Session',
-    description: 'Face-to-face anonymous video call with a mentor'
-  },
-  {
     type: 'audio',
     icon: FaVolumeUp,
     title: 'Audio Session',

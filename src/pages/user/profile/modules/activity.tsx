@@ -19,11 +19,23 @@ interface Call {
   recordingUrl?: string;
   recordingStatus?: string;
   sessionDurationMinutes?: number;
+  actualStartTime?: string;
+  timerStarted?: boolean;
+  mentorJoined?: boolean;
+  userJoined?: boolean;
 }
 
 // Timer component for ongoing sessions
-const SessionTimer: React.FC<{ startTime: string; durationMinutes: number; onExpired?: () => void }> = ({ 
+const SessionTimer: React.FC<{ 
+  startTime: string; 
+  actualStartTime?: string;
+  timerStarted?: boolean;
+  durationMinutes: number; 
+  onExpired?: () => void 
+}> = ({ 
   startTime, 
+  actualStartTime,
+  timerStarted,
   durationMinutes, 
   onExpired 
 }) => {
@@ -33,8 +45,14 @@ const SessionTimer: React.FC<{ startTime: string; durationMinutes: number; onExp
 
   useEffect(() => {
     const updateTimer = () => {
+      // If timer hasn't started yet, show waiting message
+      if (!timerStarted || !actualStartTime) {
+        setTimeLeft("Waiting...");
+        return;
+      }
+
       const now = new Date().getTime();
-      const sessionStart = new Date(startTime).getTime();
+      const sessionStart = new Date(actualStartTime).getTime();
       const sessionEnd = sessionStart + (durationMinutes * 60 * 1000);
       const remaining = sessionEnd - now;
 
@@ -71,7 +89,7 @@ const SessionTimer: React.FC<{ startTime: string; durationMinutes: number; onExp
     const interval = setInterval(updateTimer, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime, durationMinutes, onExpired, fiveMinuteWarningShown]);
+  }, [startTime, actualStartTime, timerStarted, durationMinutes, onExpired, fiveMinuteWarningShown]);
 
   return (
     <div className={clsx(
@@ -231,7 +249,9 @@ const CallHistoryTable: React.FC = () => {
                 <td className="px-4 py-2">
                   {call.status === "Ongoing" && call.sessionDurationMinutes ? (
                     <SessionTimer 
-                      startTime={call.startTime} 
+                      startTime={call.startTime}
+                      actualStartTime={call.actualStartTime}
+                      timerStarted={call.timerStarted}
                       durationMinutes={call.sessionDurationMinutes}
                     />
                   ) : (

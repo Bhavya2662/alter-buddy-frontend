@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useLazyGetMentorUsingIdQuery,
   useProfileUserQuery,
+  useUserGetMyCallsQuery,
 } from "../../../redux/rtk-api";
 import {
   AiOutlineArrowLeft,
@@ -22,6 +23,7 @@ export const UserChatPage = () => {
   const [isSessionExpired, setIsSessionExpired] = useState(false);
   const [sessionEndTime, setSessionEndTime] = useState<Date | null>(null);
   const { id, roomId } = useParams();
+  const { data: userCalls } = useUserGetMyCallsQuery();
   const [time, setTime] = useState<number>(() => {
     const stored = localStorage.getItem("time");
     return stored ? Number(stored) : 5;
@@ -29,6 +31,11 @@ export const UserChatPage = () => {
   const [GetMentor, { isError, error, isLoading, data: mentorData }] =
     useLazyGetMentorUsingIdQuery();
   const { data: userData } = useProfileUserQuery();
+
+  // Find current session data
+  const currentSession = userCalls?.data?.find(
+    (call) => call.sessionDetails?.roomId === roomId
+  );
 
   useEffect(() => {
     if (id) {
@@ -156,7 +163,10 @@ export const UserChatPage = () => {
               </p>
               <div className="flex items-center gap-3">
                 <CountdownTimerL 
-                mins={time} 
+                mins={Number(currentSession?.sessionDetails?.duration) || time}
+                actualStartTime={currentSession?.sessionDetails?.actualStartTime}
+                timerStarted={currentSession?.sessionDetails?.timerStarted}
+                callType={currentSession?.sessionDetails?.callType === 'all' ? 'chat' : (currentSession?.sessionDetails?.callType as 'video' | 'audio' | 'chat')}
                 onComplete={handleTimerComplete}
                 onExpired={handleSessionExpired}
               />

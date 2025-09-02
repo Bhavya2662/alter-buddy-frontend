@@ -500,9 +500,14 @@ export const UserMentorDetailsPage = () => {
             <p className="text-gray-500 my-2">
               Chat with the expert and get instant guidance
             </p>
-            <h6 className="text-right">
-              Wallet Effect {(wallet?.data?.balance || 0) - selectedPrice}
-            </h6>
+            <div className="bg-gray-50 p-3 rounded-lg my-3">
+              <p className="text-lg font-semibold text-[#D86570] mb-1">
+                Session Price: ₹{selectedPrice || 0}
+              </p>
+              <p className="text-sm text-gray-600">
+                Wallet Balance After Payment: ₹{(wallet?.data?.balance || 0) - selectedPrice}
+              </p>
+            </div>
             {/* Auto-select category based on the main flow selection */}
             {category && (
               <div className="mb-3">
@@ -546,8 +551,14 @@ export const UserMentorDetailsPage = () => {
                 <p className="text-gray-600">
                   Total Sessions: {selectedPackage.totalSessions || selectedPackage.totalSession}
                 </p>
+                <p className="text-lg font-semibold text-[#D86570] mb-2">
+                  Package Price: ₹{selectedPackage.price || selectedPackage.packagePrice || 0}
+                </p>
                 <p className="text-sm text-gray-500">
                   Selected: {selectedSlots.length} / {selectedPackage.totalSessions || selectedPackage.totalSession}
+                </p>
+                <p className="text-right text-sm text-gray-600">
+                  Wallet Balance After Purchase: ₹{(wallet?.data?.balance || 0) - (selectedPackage.price || selectedPackage.packagePrice || 0)}
                 </p>
               </div>
               

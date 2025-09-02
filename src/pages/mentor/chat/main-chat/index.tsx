@@ -4,6 +4,7 @@ import { socket } from "../../../../service";
 import {
   useLazyGetUserByIdQuery,
   useMentorProfileQuery,
+  useUserGetMyCallsQuery,
 } from "../../../../redux/rtk-api";
 import { useAppDispatch } from "../../../../redux";
 import {
@@ -19,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 export const MentorChatPage = () => {
   const { data: mentor } = useMentorProfileQuery();
   const { chat } = useVideoCallSlice();
+  const { data: userCalls } = useUserGetMyCallsQuery();
   const [isSessionExpired, setIsSessionExpired] = useState(false);
   const [sessionEndTime, setSessionEndTime] = useState<Date | null>(null);
   const [sessionDuration, setSessionDuration] = useState<number>(() => {
@@ -28,6 +30,11 @@ export const MentorChatPage = () => {
 
   const [GetUser, { data: userData }] = useLazyGetUserByIdQuery();
   const dispatch = useAppDispatch();
+
+  // Find current session data
+  const currentSession = userCalls?.data?.find(
+    (call) => call.sessionDetails?.roomId === chat.chatRoomId
+  );
 
   useEffect(() => {
     // Calculate session end time when component mounts
@@ -143,13 +150,20 @@ export const MentorChatPage = () => {
               </h6>
             </div>
             <div className="flex gap-3 items-center">
-              <CountdownTimerL mins={sessionDuration} onComplete={() => {
-                // Handle session end
-                navigate("/mentor/dashboard", { replace: true });
-                dispatch(
-                  handleMentorChatConfig({ roomCode: null, userId: null })
-                );
-              }} onExpired={handleSessionExpired} />
+              <CountdownTimerL 
+                mins={currentSession?.sessionDetails?.duration ? parseInt(currentSession.sessionDetails.duration) : sessionDuration}
+                actualStartTime={currentSession?.sessionDetails?.actualStartTime}
+                timerStarted={currentSession?.sessionDetails?.timerStarted}
+                callType={currentSession?.sessionDetails?.callType === 'all' ? 'chat' : (currentSession?.sessionDetails?.callType as 'video' | 'audio' | 'chat')}
+                onComplete={() => {
+                  // Handle session end
+                  navigate("/mentor/dashboard", { replace: true });
+                  dispatch(
+                    handleMentorChatConfig({ roomCode: null, userId: null })
+                  );
+                }} 
+                onExpired={handleSessionExpired} 
+              />
               <AiOutlineMore size={24} />
             </div>
           </div>

@@ -5,9 +5,19 @@ interface CountDownTimerProps {
   mins: number;
   onComplete: () => void;
   onExpired?: () => void; // New callback for when session expires
+  actualStartTime?: string;
+  timerStarted?: boolean;
+  callType?: "chat" | "audio" | "video" | "group";
 }
 
-export const CountdownTimerL: FC<CountDownTimerProps> = ({ mins, onComplete, onExpired }) => {
+export const CountdownTimerL: FC<CountDownTimerProps> = ({ 
+  mins, 
+  onComplete, 
+  onExpired, 
+  actualStartTime, 
+  timerStarted, 
+  callType 
+}) => {
   const [time, setTime] = useState<number>(mins * 60); // Convert minutes to seconds
   const [isExpired, setIsExpired] = useState<boolean>(false);
   const [showWarning, setShowWarning] = useState<boolean>(false);
@@ -16,6 +26,20 @@ export const CountdownTimerL: FC<CountDownTimerProps> = ({ mins, onComplete, onE
   const [hasShown1MinWarning, setHasShown1MinWarning] = useState<boolean>(false);
   
   useEffect(() => {
+    // If we have actualStartTime and timerStarted, calculate remaining time from actual start
+    if (actualStartTime && timerStarted) {
+      const now = new Date().getTime();
+      const sessionStart = new Date(actualStartTime).getTime();
+      const sessionEnd = sessionStart + (mins * 60 * 1000);
+      const remaining = Math.max(0, Math.floor((sessionEnd - now) / 1000));
+      setTime(remaining);
+    }
+    
+    // If timer hasn't started yet, don't countdown
+    if (actualStartTime && !timerStarted) {
+      return;
+    }
+    
     if (time === 0 && !isExpired) {
       setIsExpired(true);
       onComplete();
@@ -48,10 +72,9 @@ export const CountdownTimerL: FC<CountDownTimerProps> = ({ mins, onComplete, onE
           return newTime;
         });
       }, 1000);
-
       return () => clearInterval(timer);
     }
-  }, [time, onComplete, onExpired, isExpired, hasShown2MinWarning, hasShown1MinWarning]);
+  }, [time, mins, actualStartTime, timerStarted, onComplete, onExpired, hasShown2MinWarning, hasShown1MinWarning]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -59,10 +82,22 @@ export const CountdownTimerL: FC<CountDownTimerProps> = ({ mins, onComplete, onE
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
+  const getDisplayText = () => {
+    if (isExpired) return 'Session Expired';
+    if (actualStartTime && !timerStarted) {
+      if (callType === 'group') {
+        return 'Starting session...';
+      } else {
+        return 'Waiting for both parties to join...';
+      }
+    }
+    return `Time left - ${formatTime(time)}`;
+  };
+
   return (
     <>
       <p className={`animate-pulse ${isExpired ? 'text-red-500' : ''}`}>
-        {isExpired ? 'Session Expired' : `Time left - ${formatTime(time)}`}
+        {getDisplayText()}
       </p>
       
       {/* Warning Popup */}

@@ -191,34 +191,53 @@ const RightComponent = ({
                   (pkg.packageType || pkg.type) === callType &&
                   (!selectedCategory || (pkg.categoryId?._id || "") === selectedCategory)
                 )
-                .map((pkg, index) => (
-                  <div key={index} className="border border-gray-300 rounded-lg p-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{pkg.title || `${pkg.totalSessions} Session Package`}</h4>
-                        <p className="text-sm text-gray-600">
-                          {pkg.totalSessions} {callType} sessions • {pkg.description || 'Package deal'}
-                        </p>
-                        {pkg.validity && (
-                          <p className="text-xs text-gray-500">Valid for {pkg.validity} days</p>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-primary-500">₹{pkg.price}</p>
-                        <p className="text-xs text-gray-500">₹{Math.round(pkg.price / pkg.totalSessions)} per session</p>
-                        <AppButton
-                          outlined
-                          onClick={() => {
-                            setSelectedPrice(pkg.price);
-                            onPackageBook(pkg);
-                          }}
-                        >
-                          Select Package
-                        </AppButton>
+                .map((pkg, index) => {
+                  const isAvailable = pkg.status === 'active' || !pkg.status;
+                  const savings = pkg.totalSessions > 1 ? Math.round(((selectedPrice * pkg.totalSessions) - pkg.price) / (selectedPrice * pkg.totalSessions) * 100) : 0;
+                  
+                  return (
+                    <div key={index} className={`border rounded-lg p-3 ${
+                      isAvailable ? 'border-gray-300 hover:border-primary-300' : 'border-gray-200 bg-gray-50'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold text-gray-900">{pkg.title || `${pkg.totalSessions} Session Package`}</h4>
+                            {savings > 0 && (
+                              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                                Save {savings}%
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            {pkg.totalSessions} {callType} sessions • {pkg.description || 'Package deal'}
+                          </p>
+                          {pkg.validity && (
+                            <p className="text-xs text-gray-500">Valid for {pkg.validity} days</p>
+                          )}
+                          {!isAvailable && (
+                            <p className="text-xs text-red-500 mt-1">Currently unavailable</p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-primary-500">₹{pkg.price}</p>
+                          <p className="text-xs text-gray-500">₹{Math.round(pkg.price / pkg.totalSessions)} per session</p>
+                          <AppButton
+                            outlined
+                            disabled={!isAvailable}
+                            onClick={() => {
+                              setSelectedPrice(pkg.price);
+                              onPackageBook(pkg);
+                            }}
+                            className={!isAvailable ? 'opacity-50 cursor-not-allowed' : ''}
+                          >
+                            Book Package of {pkg.totalSessions} Sessions
+                          </AppButton>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               }
             </div>
           </div>
@@ -477,7 +496,7 @@ const RightComponent = ({
                     onClick={() => onPackageBook(pack)}
                   >
                     <AiOutlineGift size={20} />
-                    Use 1 of {pack.remainingSessions} sessions
+                    Book a Package of {pack.totalSessions || pack.totalSession} Sessions
                   </AppButton>
                   <br />
                 </>

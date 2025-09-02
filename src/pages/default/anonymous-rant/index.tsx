@@ -10,19 +10,13 @@ import axios from "axios";
 import { io, Socket } from "socket.io-client";
 
 interface SessionType {
-  type: 'video' | 'audio' | 'chat';
+  type: 'audio' | 'chat';
   icon: React.ComponentType;
   title: string;
   description: string;
 }
 
 const sessionTypes: SessionType[] = [
-  {
-    type: 'video',
-    icon: FaVideo,
-    title: 'Video Session',
-    description: 'Face-to-face anonymous video call with a mentor'
-  },
   {
     type: 'audio',
     icon: FaVolumeUp,
