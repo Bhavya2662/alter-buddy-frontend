@@ -67,9 +67,23 @@ export const MentorDashboardPage = () => {
   );
 
   useEffect(() => {
-    if (isCallError) console.log(callError);
-    if (isSlotError) console.log(slotError);
-  }, [isSlotError, slotError, isCallError, callError]);
+    if (isCallError) {
+      console.log(callError);
+      toast.error("Failed to load call history");
+    }
+    if (isSlotError) {
+      console.log(slotError);
+      toast.error("Failed to load schedules");
+    }
+    if (isProfileError) {
+      console.log(profileError);
+      toast.error("Failed to load profile");
+    }
+    if (isWalletError) {
+      console.log(walletError);
+      toast.error("Failed to load wallet data");
+    }
+  }, [isSlotError, slotError, isCallError, callError, isProfileError, profileError, isWalletError, walletError]);
 
   useEffect(() => {
     triggerGetMentorProfile();
@@ -173,7 +187,11 @@ export const MentorDashboardPage = () => {
                 {lengthFormatter.format(slots?.data?.length)}
               </p>
               <p className="text-gray-500">
-                From {moment(slots?.data[0]?.slotsDate).format("ll")} - To {moment(slots?.data[slots?.data?.length - 1]?.slotsDate).format("ll")}
+                {slots?.data && slots.data.length > 0 ? (
+                  `From ${moment(slots.data[0]?.slotsDate).format("ll")} - To ${moment(slots.data[slots.data.length - 1]?.slotsDate).format("ll")}`
+                ) : (
+                  "No slots available"
+                )}
               </p>
             </div>
             <div className="bg-white shadow rounded-lg p-4 cursor-pointer" onClick={() => navigate('/mentor/schedules')}>
@@ -187,7 +205,11 @@ export const MentorDashboardPage = () => {
                 )}
               </p>
               <p className="text-gray-500">
-                From {moment(slots?.data[0]?.slotsDate).format("ll")} - To {moment(slots?.data[slots?.data?.length - 1]?.slotsDate).format("ll")}
+                {slots?.data && slots.data.length > 0 ? (
+                  `From ${moment(slots.data[0]?.slotsDate).format("ll")} - To ${moment(slots.data[slots.data.length - 1]?.slotsDate).format("ll")}`
+                ) : (
+                  "No confirmed slots"
+                )}
               </p>
             </div>
             <div className="bg-white shadow rounded-lg p-4 cursor-pointer" onClick={() => navigate('/mentor/call-history')}>
@@ -196,7 +218,11 @@ export const MentorDashboardPage = () => {
                 {lengthFormatter.format(calls?.data?.length)}
               </p>
               <p className="text-gray-500">
-                First {moment(calls?.data[0]?.createdAt).format("ll")} - Last {moment(calls?.data[calls?.data?.length - 1]?.createdAt).format("ll")}
+                {calls?.data && calls.data.length > 0 ? (
+                  `First ${moment(calls.data[0]?.createdAt).format("ll")} - Last ${moment(calls.data[calls.data.length - 1]?.createdAt).format("ll")}`
+                ) : (
+                  "No call history"
+                )}
               </p>
             </div>
             <div className="bg-white shadow rounded-lg p-4 cursor-pointer" onClick={() => navigate('/mentor/payment-history')}>

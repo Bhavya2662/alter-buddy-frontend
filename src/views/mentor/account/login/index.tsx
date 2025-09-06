@@ -81,13 +81,12 @@ export const MentorLoginPage = () => {
     if (isMentorSuccess) {
       dispatch(handleError(null));
       setMentorToken(mentorData?.data?.token as string);
-      if (localStore) {
-        dispatch(
-          handleMentorAuthentication({
-            token: mentorData?.data.token as string,
-          })
-        );
-      }
+      // Always dispatch authentication when login is successful
+      dispatch(
+        handleMentorAuthentication({
+          token: mentorData?.data.token as string,
+        })
+      );
 
       triggerGetMentorProfile(); // ✅ now called only after login
     }
@@ -97,7 +96,6 @@ export const MentorLoginPage = () => {
     dispatch,
     isMentorSuccess,
     mentorData,
-    localStore,
     navigate,
   ]);
 

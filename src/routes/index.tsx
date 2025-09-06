@@ -70,7 +70,6 @@ const hideLayoutRoutes = [
   "/mobile-verification",
   "/coming-soon",
   "/mentor/login",
-  "/mentor/sign-in",
   "/mentor/dashboard",
   "/mentor/chat/messages",
   "/mentor/call-history",
@@ -91,7 +90,6 @@ const hideLayoutRoutes1 = [
   "/mobile-verification",
   "/coming-soon",
   "/mentor/login",
-  "/mentor/sign-in",
   "/mentor/dashboard",
   "/mentor/chat/messages",
   "/mentor/call-history",
@@ -197,7 +195,6 @@ export const AppRoutes = () => {
           </Route>
         </Route>
         <Route path="/mentor/login" element={<MentorLoginPage />} />
-        <Route path="/mentor/sign-in" element={<MentorLoginPage />} />
         <Route path="mentor">
           <Route element={<MentorPrivateRoutes />}>
             <Route path="dashboard" element={<MentorDashboardPage />} />
