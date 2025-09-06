@@ -1,6 +1,6 @@
 {
   "extends": [
-    "@babel/plugin-transform-private-property-in-object",
-    "next/core-web-vitals"
+    "react-app",
+    "react-app/jest"
   ]
 }
