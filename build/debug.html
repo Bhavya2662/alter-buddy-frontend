@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vercel Deployment Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        .loading { background: #cce7ff; border-color: #b3d9ff; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Vercel Deployment Diagnostic Tool</h1>
+        <p>This tool will help identify why the mentor panel shows a blank page on Vercel.</p>
+        
+        <div id="environment-test" class="test-section loading">
+            <h3>📋 Environment Variables Test</h3>
+            <div id="env-results">Testing...</div>
+        </div>
+        
+        <div id="api-test" class="test-section loading">
+            <h3>🌐 API Connectivity Test</h3>
+            <div id="api-results">Testing...</div>
+            <button class="btn-primary" onclick="testAPI()">Retry API Test</button>
+        </div>
+        
+        <div id="routing-test" class="test-section loading">
+            <h3>🛣️ Routing Test</h3>
+            <div id="routing-results">Testing...</div>
+        </div>
+        
+        <div id="console-test" class="test-section loading">
+            <h3>🐛 Console Errors</h3>
+            <div id="console-results">Checking...</div>
+        </div>
+        
+        <div id="mentor-login-test" class="test-section">
+            <h3>👨‍🏫 Mentor Login Test</h3>
+            <div id="mentor-login-results">
+                <button class="btn-primary" onclick="testMentorLogin()">Test Mentor Login</button>
+                <div id="login-output"></div>
+            </div>
+        </div>
+        
+        <div id="recommendations" class="test-section">
+            <h3>💡 Recommendations</h3>
+            <div id="rec-results">Analysis in progress...</div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            environment: false,
+            api: false,
+            routing: false,
+            console: false
+        };
+        
+        // Test 1: Environment Variables
+        function testEnvironment() {
+            const envDiv = document.getElementById('env-results');
+            const envSection = document.getElementById('environment-test');
+            
+            const requiredEnvs = [
+                'REACT_APP_BACKEND_URL',
+                'REACT_APP_API_BASE_URL', 
+                'REACT_APP_API_URL',
+                'REACT_APP_SOCKET_SERVER',
+                'REACT_APP_ABLY_KEY'
+            ];
+            
+            let envStatus = '<h4>Environment Variables Status:</h4>';
+            let allPresent = true;
+            
+            // Note: In production build, process.env is replaced at build time
+            // We'll check if the URLs are properly configured
+            const backendUrl = '%REACT_APP_BACKEND_URL%';
+            const apiUrl = '%REACT_APP_API_URL%';
+            
+            if (backendUrl.includes('railway.app')) {
+                envStatus += '<p>✅ REACT_APP_BACKEND_URL: ' + backendUrl + '</p>';
+            } else {
+                envStatus += '<p>❌ REACT_APP_BACKEND_URL: Not properly configured</p>';
+                allPresent = false;
+            }
+            
+            if (apiUrl.includes('railway.app')) {
+                envStatus += '<p>✅ REACT_APP_API_URL: ' + apiUrl + '</p>';
+            } else {
+                envStatus += '<p>❌ REACT_APP_API_URL: Not properly configured</p>';
+                allPresent = false;
+            }
+            
+            testResults.environment = allPresent;
+            envDiv.innerHTML = envStatus;
+            envSection.className = allPresent ? 'test-section success' : 'test-section error';
+        }
+        
+        // Test 2: API Connectivity
+        async function testAPI() {
+            const apiDiv = document.getElementById('api-results');
+            const apiSection = document.getElementById('api-test');
+            
+            apiDiv.innerHTML = 'Testing API connectivity...';
+            apiSection.className = 'test-section loading';
+            
+            try {
+                const apiUrl = 'https://alter-buddy-api-main-production.up.railway.app/api/1.0';
+                
+                // Test basic API endpoint
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.text();
+                    apiDiv.innerHTML = `
+                        <p>✅ API is accessible</p>
+                        <p>Status: ${response.status}</p>
+                        <p>Response: ${data.substring(0, 200)}...</p>
+                    `;
+                    testResults.api = true;
+                    apiSection.className = 'test-section success';
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                apiDiv.innerHTML = `
+                    <p>❌ API connectivity failed</p>
+                    <p>Error: ${error.message}</p>
+                    <p>This could indicate CORS issues or API downtime</p>
+                `;
+                testResults.api = false;
+                apiSection.className = 'test-section error';
+            }
+        }
+        
+        // Test 3: Routing
+        function testRouting() {
+            const routingDiv = document.getElementById('routing-results');
+            const routingSection = document.getElementById('routing-test');
+            
+            const currentPath = window.location.pathname;
+            const currentHash = window.location.hash;
+            
+            let routingStatus = `
+                <p>Current Path: ${currentPath}</p>
+                <p>Current Hash: ${currentHash}</p>
+                <p>Current URL: ${window.location.href}</p>
+            `;
+            
+            // Check if we're on the mentor login page
+            if (currentPath.includes('/mentor/login')) {
+                routingStatus += '<p>✅ Mentor login route detected</p>';
+                testResults.routing = true;
+                routingSection.className = 'test-section success';
+            } else {
+                routingStatus += '<p>⚠️ Not on mentor login page</p>';
+                testResults.routing = false;
+                routingSection.className = 'test-section warning';
+            }
+            
+            routingDiv.innerHTML = routingStatus;
+        }
+        
+        // Test 4: Console Errors
+        function testConsole() {
+            const consoleDiv = document.getElementById('console-results');
+            const consoleSection = document.getElementById('console-test');
+            
+            // Capture console errors
+            let errors = [];
+            const originalError = console.error;
+            console.error = function(...args) {
+                errors.push(args.join(' '));
+                originalError.apply(console, args);
+            };
+            
+            setTimeout(() => {
+                let consoleStatus = '';
+                if (errors.length === 0) {
+                    consoleStatus = '<p>✅ No console errors detected</p>';
+                    testResults.console = true;
+                    consoleSection.className = 'test-section success';
+                } else {
+                    consoleStatus = '<p>❌ Console errors detected:</p><pre>' + errors.join('\n') + '</pre>';
+                    testResults.console = false;
+                    consoleSection.className = 'test-section error';
+                }
+                consoleDiv.innerHTML = consoleStatus;
+            }, 2000);
+        }
+        
+        // Test 5: Mentor Login
+        async function testMentorLogin() {
+            const loginDiv = document.getElementById('login-output');
+            
+            loginDiv.innerHTML = 'Testing mentor login...';
+            
+            try {
+                const response = await fetch('https://alter-buddy-api-main-production.up.railway.app/api/1.0/mentor/sign-in', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'testmentor',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.data && data.data.token) {
+                    loginDiv.innerHTML = `
+                        <p>✅ Mentor login successful!</p>
+                        <p>Token received: ${data.data.token.substring(0, 20)}...</p>
+                        <p>This means the API is working correctly.</p>
+                    `;
+                } else {
+                    loginDiv.innerHTML = `
+                        <p>❌ Mentor login failed</p>
+                        <p>Response: ${JSON.stringify(data, null, 2)}</p>
+                    `;
+                }
+            } catch (error) {
+                loginDiv.innerHTML = `
+                    <p>❌ Mentor login error</p>
+                    <p>Error: ${error.message}</p>
+                `;
+            }
+        }
+        
+        // Generate Recommendations
+        function generateRecommendations() {
+            const recDiv = document.getElementById('rec-results');
+            let recommendations = '<h4>🔧 Recommended Actions:</h4>';
+            
+            if (!testResults.environment) {
+                recommendations += `
+                    <div class="error" style="margin: 10px 0; padding: 10px;">
+                        <strong>❌ Environment Variables Issue</strong>
+                        <p>Environment variables are not properly configured on Vercel.</p>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                            <li>Go to Vercel Dashboard → Your Project → Settings → Environment Variables</li>
+                            <li>Add the following variables:
+                                <ul>
+                                    <li>REACT_APP_BACKEND_URL = https://alter-buddy-api-main-production.up.railway.app/api/1.0</li>
+                                    <li>REACT_APP_API_BASE_URL = https://alter-buddy-api-main-production.up.railway.app</li>
+                                    <li>REACT_APP_API_URL = https://alter-buddy-api-main-production.up.railway.app/api/1.0</li>
+                                    <li>REACT_APP_SOCKET_SERVER = https://alter-buddy-api-main-production.up.railway.app</li>
+                                    <li>REACT_APP_ABLY_KEY = [Your Ably Key]</li>
+                                </ul>
+                            </li>
+                            <li>Redeploy the application</li>
+                        </ol>
+                    </div>
+                `;
+            }
+            
+            if (!testResults.api) {
+                recommendations += `
+                    <div class="error" style="margin: 10px 0; padding: 10px;">
+                        <strong>❌ API Connectivity Issue</strong>
+                        <p>Cannot connect to Railway API from Vercel.</p>
+                        <p><strong>Possible causes:</strong></p>
+                        <ul>
+                            <li>CORS configuration on Railway backend</li>
+                            <li>Railway API is down or not accessible</li>
+                            <li>Network connectivity issues</li>
+                        </ul>
+                        <p><strong>Solution:</strong> Check Railway backend CORS settings and ensure it allows requests from Vercel domain.</p>
+                    </div>
+                `;
+            }
+            
+            if (testResults.environment && testResults.api) {
+                recommendations += `
+                    <div class="success" style="margin: 10px 0; padding: 10px;">
+                        <strong>✅ Basic Configuration Looks Good</strong>
+                        <p>Environment variables and API connectivity are working.</p>
+                        <p>The blank page issue might be related to:</p>
+                        <ul>
+                            <li>JavaScript errors during React app initialization</li>
+                            <li>Missing dependencies or build issues</li>
+                            <li>Routing configuration problems</li>
+                        </ul>
+                        <p><strong>Next steps:</strong> Check browser console for JavaScript errors when visiting the mentor login page.</p>
+                    </div>
+                `;
+            }
+            
+            recDiv.innerHTML = recommendations;
+        }
+        
+        // Run all tests on page load
+        window.onload = function() {
+            testEnvironment();
+            testAPI();
+            testRouting();
+            testConsole();
+            
+            // Generate recommendations after a delay
+            setTimeout(generateRecommendations, 3000);
+        };
+    </script>
+</body>
+</html>

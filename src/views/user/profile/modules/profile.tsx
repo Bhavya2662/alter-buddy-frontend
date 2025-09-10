@@ -2,6 +2,12 @@ import { Formik } from "formik";
 import { AppButton, TextField } from "../../../../component";
 import { UserProps } from "../../../../interface";
 import { Dispatch, FC, SetStateAction } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMentorSignInMutation } from "../../../../redux/rtk-api";
+import { useAppDispatch } from "../../../../redux";
+import { handleMentorAuthentication } from "../../../../redux/features";
+import { setMentorToken } from "../../../../utils";
+import { toast } from "react-toastify";
 
 export interface IUserProfileModuleProps {
   handleSubmit: (props: UserProps) => void;
@@ -16,9 +22,27 @@ export const UserProfile: FC<IUserProfileModuleProps> = ({
   profile,
   isUpdateLoading,
 }) => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [mentorSignIn, { isLoading: isMentorLoginLoading }] = useMentorSignInMutation();
+
+  const handleMentorLogin = () => {
+    // Navigate to mentor login page
+    navigate("/mentor/login");
+  };
   return (
     <div >
-      <h6 className="text-2xl">My Profile</h6>
+      <div className="flex justify-between items-center mb-6">
+        <h6 className="text-2xl">My Profile</h6>
+        <AppButton 
+          onClick={handleMentorLogin}
+          outlined={false}
+          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-none flex items-center gap-2"
+        >
+          <span className="text-lg">🎓</span>
+          <span>Login as Mentor</span>
+        </AppButton>
+      </div>
       <Formik
         enableReinitialize
         onSubmit={handleSubmit}
